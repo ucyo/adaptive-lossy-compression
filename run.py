@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""Calculate replacements concurrently."""
 
-from envelope import TimeSeriesEnvelope, Modified
-import pandas as pd
-from concurrent import futures
-import multiprocessing as mp
-import transport as ts
 import os
+import multiprocessing as mp
+from concurrent import futures
+
+import pandas as pd
+import transport as ts
+from envelope import TimeSeriesEnvelope, Modified
 
 
 def main():
@@ -31,11 +33,12 @@ def main():
 
 
 def get_corr(index, timeline, to_bits, from_bits=1, perc=10):
+    """Calculate cumulative correlation of each replacement method."""
     print('Doing timeline {}, compressed at {}, getting from +{}'.format(timeline, to_bits, from_bits))
     from_bits = to_bits + from_bits
     percentage = perc/100.
-    arima_path = os.path.join(os.path.dirname(__file__),'data','arima_uncompressed')
-    zfp_path = os.path.join(os.path.dirname(__file__),'data','direct_uncompressed')
+    arima_path = os.path.join(os.path.dirname(__file__), 'data', 'arima_uncompressed')
+    zfp_path = os.path.join(os.path.dirname(__file__), 'data', 'direct_uncompressed')
     arima = Modified(arima_path, index=index, timeline=timeline)
     zfp = TimeSeriesEnvelope(zfp_path, index=index, timeline=timeline)
 
