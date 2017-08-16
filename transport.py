@@ -134,9 +134,6 @@ def _get_update_list(timeseries, other, blocksize, seed=1986):
             if all(np.diff(choosen) > blocksize):
                 break
         return choosen
-#         name = '{}-b-{:02d}'.format('var', bits)
-#         update_list[name] = choosen
-#         print('Done',name)
     except ValueError:
         pass
     return update_list
