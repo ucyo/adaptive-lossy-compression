@@ -1,29 +1,36 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""Helper functions for transporting compressed values from one block to the other."""
+
+import logging
+import pickle
 
 import xarray as xr
 import numpy as np
-import pickle
 import manualsarima as ms
-import logging
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
 def cumcorr(timeseries, other):
+    """Cumulative correlation of a time series."""
     return timeseries.index.map(lambda x: timeseries.corr(other.loc[:x]))
 
 
 def cumcorr_close_to_one(timeseries, other, atol=1e-05):
+    """Return if cumulative correlation is close to one."""
     return cumcorr(timeseries, other) >= 1-atol
 
 
 def indices_need_correction(timeseries, other, atol=1e-05):
+    """Return indices which need correction."""
     return np.where(cumcorr(timeseries, other) < 1-atol)[0]
 
 
 def get_best_compressed(df, other, **kwargs):
+    """Return no. of bits of best compressed time series."""
     for i in range(1, 33):
         if not indices_need_correction(df[i], other, **kwargs).any():
             return i
@@ -140,6 +147,7 @@ def _get_update_list(timeseries, other, blocksize, seed=1986):
 
 
 def reconstruct(var, timeline, resid):
+    """Reconstruction method for ARIMA time series."""
     assert resid.dtype == np.float32, "ERR: {}".format(np.float32)
     ds = xr.open_dataset('../database/{}_weather.nc'.format(timeline))
     modelname = './model/model_{}_{}.model'.format(var, timeline)
