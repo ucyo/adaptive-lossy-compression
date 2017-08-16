@@ -46,7 +46,7 @@ def indices(indiceslist, blocksize, from_series):
     neg = indiceslist[~intersections]
     message = "{} not allowed: Next index within block range".format(neg)
     assert all(intersections), message
-    logging.info("Starting points: {}".format(indiceslist))
+    logging.info("Starting points: %s", indiceslist)
     for start in indiceslist:
         yield from_series[start:start+blocksize]
 
@@ -56,7 +56,7 @@ def linear(quantity, blocksize, from_series):
     blocklength = int((from_series.size - quantity*blocksize) / (quantity + 1))
     startingpoints = [x * (blocksize + blocklength) - (blocksize//2)
                       for x in range(1, quantity+1)]
-    logging.info("Starting points: {}".format(startingpoints))
+    logging.info("Starting points: %s", startingpoints)
     for start in startingpoints:
         yield from_series[start:start+blocksize]
 
@@ -101,15 +101,14 @@ def replace(quantity, blocksize, from_series, to_series, mode='linear'):
         essage = "'indices', 'auto'], got {}".format(mode)
         raise AttributeError(m+essage)
     replacement_blocks = list(replacement_blocks)
-    logging.debug("Replacement blocks: {}".format(replacement_blocks))
+    logging.debug("Replacement blocks: %s", replacement_blocks)
     replaced = 0
     for x in replacement_blocks:
         for i, val in enumerate(x):
             valx_to_valy = '{:.3f} to {:.3f}'.format(result[x.index[i]], val)
             posx = "{}@{}".format(result.name, x.index[i])
             posy = "{}@{}".format(from_series.name, x.index[i])
-            logging.debug('Replacing {} with {} > {}'.format(posx, posy,
-                                                             valx_to_valy))
+            logging.debug('Replacing %s with %s > %s', posx, posy, valx_to_valy)
             result.set_value(x.index[i], val)
             replaced += 1
     print(replaced)
@@ -142,7 +141,7 @@ def _get_update_list(timeseries, other, blocksize, seed=1986):
                 break
         return choosen
     except ValueError:
-        logging.warning("Intended value error: {}".format(choosen))
+        logging.warning("Intended value error: %s", choosen)
     return update_list
 
 
