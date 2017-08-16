@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""Calculate residue and fitted_values manually of ARIMA model."""
+"""Calculate residue and fitted_values manually of SARIMA model."""
 
 import numpy as np
 import pandas as pd
 
 
 def calc_resid_no_diff(arparams, maparams, intercept, data, *args, **kwargs):
+    """Calculate residue without differentiation step."""
     max_param = max(arparams.size, maparams.size)
     errarr = np.array(data[:max_param], np.float32).copy()
     for i in range(max_param, data.size):
@@ -20,6 +21,7 @@ def calc_resid_no_diff(arparams, maparams, intercept, data, *args, **kwargs):
 
 
 def calc_fitted_no_diff(arparams, maparams, intercept, resid, *args, **kwargs):
+    """Calculate fitted values without differentiation step."""
     max_param = max(arparams.size, maparams.size)
     val = resid[:max_param].copy()
     for i in range(max_param, resid.size):
@@ -33,8 +35,10 @@ def calc_fitted_no_diff(arparams, maparams, intercept, resid, *args, **kwargs):
 
 
 def differentiation(diff, *args, **kwargs):
+    """Calculate differentiation of given size."""    
 
     def rev(diffarr, orig, dif=2):
+        """Reverse differentiation step."""
         assert not np.isnan(orig[:dif]).any(), "First <{}> values are not allowed to be np.nan".format(diff)
         part1 = orig[:dif].copy()
         part2 = diffarr.copy()
@@ -46,21 +50,27 @@ def differentiation(diff, *args, **kwargs):
         return res
 
     def rev_one(diffarr, orig):
+        """Reverse with one differentiation step."""
         return rev(diffarr, orig, 1)
 
     def rev_two(diffarr, orig):
+        """Reverse with two differentiation steps."""
         return rev_one(rev_one(diffarr, orig.diff().dropna()), orig)
     
     def rev_zero(diffarr, orig):
+        """Reverse with no differentiation step."""
         return diffarr
 
     def diff_one(orig):
+        """"Calculate difference with one step."""
         return orig.diff().dropna()
 
     def diff_two(orig):
+        """"Calculate difference with two steps."""
         return orig.diff().diff().dropna()
     
     def diff_zero(orig):
+        """"Calculate difference with no steps."""
         return orig
 
     if diff == 1:
@@ -72,6 +82,7 @@ def differentiation(diff, *args, **kwargs):
 
 
 def calc_resid_seasonal(arparams, maparams, intercept, data, seasonal_arparams, seasonal_maparams, season, *args, **kwargs):
+    """Calculate seasonal residue without differentiation step."""
     max_param = max(arparams.size, maparams.size, seasonal_arparams.size, seasonal_maparams.size)
     errarr = np.array(data[:max_param], np.float32).copy()
     for i in range(max_param, data.size):
@@ -89,6 +100,7 @@ def calc_resid_seasonal(arparams, maparams, intercept, data, seasonal_arparams, 
 
 
 def calc_fitted_seasonal(arparams, maparams, intercept, resid, seasonal_arparams, seasonal_maparams, season, *args, **kwargs):
+    """Calculate seasonal fitted values without differentiation step."""
     max_param = max(arparams.size, maparams.size, seasonal_arparams.size, seasonal_maparams.size)
     val = resid[:max_param].copy()
 
@@ -107,6 +119,7 @@ def calc_fitted_seasonal(arparams, maparams, intercept, resid, seasonal_arparams
 
 
 def getparams(model):
+    """Extract parameters from SARIMA model."""
     arparams = model.arparams.astype(np.float32).copy() if 'ar' in model.param_terms else np.array([0], np.float32)
     maparams = model.maparams.astype(np.float32).copy() if 'ma' in model.param_terms else np.array([0], np.float32)
     seasonal_arparams = model.polynomial_seasonal_ar[1:].astype(np.float32).copy() if 'seasonal_ar' in model.param_terms else np.array([0], np.float32)
