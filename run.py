@@ -12,10 +12,14 @@ from envelope import TimeSeriesEnvelope, Modified
 
 
 def main():
-    for perc in [5]:#, 10]:
-        for t in ['mm']:
-            for x in ['nao']:#, 'enso34','qbo30', 'qbo50']:
-                w = mp.cpu_count()
+    """Calculate replacement methods cocurrently."""
+    percentages = [5, 10]  # percent of data points to be updated
+    timeline = ['mm']  # time spectrum with 'mm' for months and 'dm' for days
+    indices = ['nao', 'enso34', 'qbo30', 'qbo50']  # which environmental index to calculate
+    w = mp.cpu_count()  # how many max. worker nodes to use
+    for perc in percentages:
+        for t in timeline:
+            for x in indices:
                 with futures.ProcessPoolExecutor(max_workers=w) as executor:
                     future_corrs = {executor.submit(get_corr, x, t, y, k, perc): '{}_{}_{:02d}_{:02d}'.format(x, t, y, k)
                                     for y in range(6, 7)
