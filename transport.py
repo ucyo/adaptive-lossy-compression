@@ -135,7 +135,7 @@ def _get_update_list(timeseries, other, blocksize, seed=1986):
                 break
         return choosen
     except ValueError:
-        pass
+        logging.warning("Intended value error: {}".format(choosen))
     return update_list
 
 
