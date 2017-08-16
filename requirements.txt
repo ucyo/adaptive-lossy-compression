@@ -1,0 +1,6 @@
+ipython-genutils==0.2.0
+jupyter-client==5.0.1
+jupyter-core==4.3.0
+patsy==0.4.1
+prompt-toolkit==1.0.14
+statsmodels==0.8.0
