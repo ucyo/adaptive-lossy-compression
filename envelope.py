@@ -63,7 +63,7 @@ class BaseEnvelope(object):
                 except Exception:
                     raise
                 else:
-                    logger.info('Loaded:', fname)
+                    logger.info('Loaded: %s', fname)
         df.columns = pd.MultiIndex.from_tuples(df.columns,
                                                names=['index', 'bits'])
         return df
