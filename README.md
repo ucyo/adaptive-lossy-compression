@@ -1,4 +1,4 @@
-Code from publication @eScience 2017:
+Code from publication [@eScience 2017](https://doi.org/10.1109/eScience.2017.45):
 Adaptive Lossy Compression of Complex Environmental
 Indices using Seasonal Auto Regressive Integrated
 Moving Average Models.
